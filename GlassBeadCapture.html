@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>19x19 Bead Capture Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: fantasy;
+            background-image: url('background.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: opacity 0.5s ease-in-out;
+        }
+        svg {
+            border: 2px solid white;
+            width: 800px;
+            height: 800px;
+        }
+        .scoreboard {
+            margin-left: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            display: none;
+            color: #d4a373;
+            font-family: 'Press Start 2P', cursive;
+            padding: 15px;
+            padding-top: 50px; /* Added to stretch upwards for turn display */
+            padding-bottom: 80px;
+            border-radius: 10px;
+        }
+        #turnDisplay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            font-family: fantasy;
+        }
+        #winMessage {
+            font-size: 30px;
+            color: green;
+            font-weight: bold;
+            display: none;
+            font-family: fantasy;
+        }
+        #gameScreen {
+            display: block;
+            position: relative;
+        }
+        #winScreen, #tournamentEndScreen {
+            display: none;
+            text-align: center;
+            transition: opacity 0.5s ease-in-out;
+        }
+        #winScreen {
+            padding: 20px;
+            border-radius: 10px;
+        }
+        #tournamentEndScreen {
+            padding: 20px;
+            border-radius: 10px;
+        }
+        #winScreen button, #tournamentEndScreen button {
+            margin: 15px;
+            padding: 40px 80px;
+            background-color: transparent;
+            color: white;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            font-family: fantasy;
+            transition: transform 0.2s ease;
+            position: relative;
+            z-index: 1;
+        }
+        #winScreen button:hover, #tournamentEndScreen button:hover {
+            transform: scale(1.05);
+            background-color: transparent;
+        }
+        .name-entry {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-family: fantasy;
+            color: white;
+            display: none;
+        }
+        input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            margin: 5px;
+            color: white;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid white;
+            font-family: fantasy;
+        }
+        button {
+            padding: 40px 80px;
+            font-size: 22px;
+            cursor: pointer;
+            background-color: transparent;
+            color: white;
+            border: none;
+            font-family: fantasy;
+            transition: transform 0.2s ease;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: relative;
+            z-index: 1;
+            margin: 10px;
+        }
+        button:hover {
+            transform: scale(1.05);
+            background-color: transparent;
+        }
+        #play2Button {
+            background-image: url('play2.png');
+        }
+        #play4Button {
+            background-image: url('play4.png');
+        }
+        #playButton {
+            background-image: url('play.png');
+            display: none;
+        }
+        #tournamentButton {
+            background-image: url('tournament.png');
+            display: none;
+        }
+        #quitButton {
+            background-image: url('quit.png');
+        }
+        #rematchButton {
+            background-image: url('rematch.png');
+        }
+        #quitGameButton {
+            background-image: url('quitGame.png');
+        }
+        #undoButton {
+            background-image: url('undo.png');
+            padding: 30px 60px;
+            display: none;
+        }
+        .stone {
+            pointer-events: none;
+        }
+        #winScreenMessage, #tournamentWinner {
+            color: white;
+            font-family: fantasy;
+            font-size: 24px;
+        }
+        #scoreDisplay, #finalScores {
+            color: white;
+            font-size: 18px;
+            margin-top: 10px;
+            font-family: fantasy;
+        }
+        .captured-stones {
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 150px;
+            margin-top: 5px;
+        }
+        .captured-stone {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.5s ease-in-out;
+        }
+        #blueScore { color: #6666FF; }
+        #redScore { color: #FF6666; }
+        #yellowScore { color: #FFFF00; }
+        #greenScore { color: #00FF00; }
+        /* Modified CSS for sound toggle button */
+        #soundToggleButton {
+            font-size: 20px;
+            font-family: fantasy;
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 10px; /* Added spacing from undo button */
+            position: relative; /* Changed from absolute to relative for proper flow */
+        }
+        #soundToggleButton:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container" id="nameEntryScreen">
+    <div class="name-entry" id="player1Entry">
+        <label for="player1Name">Enter Player 1's name (Blue Stones): <br></label>
+        <input type="text" id="player1Name" placeholder="Player 1" maxlength="12" />
+    </div>
+    <div class="name-entry" id="player2Entry">
+        <label for="player2Name">Enter Player 2's name (Red Stones): <br></label>
+        <input type="text" id="player2Name" placeholder="Player 2" maxlength="12" />
+    </div>
+    <div class="name-entry" id="player3Entry">
+        <label for="player3Name">Enter Player 3's name (Yellow Stones): <br></label>
+        <input type="text" id="player3Name" placeholder="Player 3" maxlength="12" />
+    </div>
+    <div class="name-entry" id="player4Entry">
+        <label for="player4Name">Enter Player 4's name (Green Stones): <br></label>
+        <input type="text" id="player4Name" placeholder="Player 4" maxlength="12" />
+    </div>
+    <button id="play2Button" onclick="showPlayers(2)"></button>
+    <button id="play4Button" onclick="showPlayers(4)"></button>
+    <div id="playButtonContainer">
+        <button id="playButton" onclick="startGame(false)"></button>
+        <button id="tournamentButton" onclick="startGame(true)"></button>
+    </div>
+    <br>
+    <button id="quitButton" onclick="quitGameCompletely()"></button>
+</div>
+
+<div class="game-container" id="gameScreen" style="display:none;">
+    <svg id="grid" width="800" height="800">
+        <image id="boardImage" href="board.png" x="0" y="0" width="800" height="800" />
+    </svg>
+    <p id="winMessage"></p>
+</div>
+
+<h2 id="turnDisplay"></h2>
+<div id="scoreboard" class="scoreboard">
+    <p>Captured Pairs</p>
+    <p id="blueScore">Blue: <span id="blueCaptured">0</span></p>
+    <div id="blueCapturedStones" class="captured-stones"></div>
+    <p id="redScore">Red: <span id="redCaptured">0</span></p>
+    <div id="redCapturedStones" class="captured-stones"></div>
+    <p id="yellowScore">Yellow: <span id="yellowCaptured">0</span></p>
+    <div id="yellowCapturedStones" class="captured-stones"></div>
+    <p id="greenScore">Green: <span id="greenCaptured">0</span></p>
+    <div id="greenCapturedStones" class="captured-stones"></div>
+    <button id="undoButton" onclick="undoTurn()"></button>
+    <button id="soundToggleButton" onclick="toggleSound()" style="background-image: url('on.png'); width: 60px; height: 30px; background-size: contain; background-repeat: no-repeat; background-position: center; border: none; background-color: transparent; cursor: pointer;"></button>
+</div>
+
+<div id="winScreen">
+    <h2 id="winScreenMessage"></h2>
+    <div id="scoreDisplay"></div>
+    <button id="rematchButton" onclick="rematch()"></button>
+    <button id="quitGameButton" onclick="quitGame()"></button>
+</div>
+
+<div id="tournamentEndScreen">
+    <h2 id="tournamentWinner"></h2>
+    <div id="finalScores"></div>
+    <button id="quitGameButton" onclick="quitGame()"></button>
+</div>
+
+<audio id="placeSound" src="place.mp3" preload="auto"></audio>
+<audio id="captureSound" src="capture.mp3" preload="auto"></audio>
+<audio id="winSound" src="win.mp3" preload="auto"></audio>
+
+<script>
+    const size = 19;
+    const spacing = 40;
+    const stoneSize = 30;
+    const boardOffset = spacing;
+    const svg = document.getElementById("grid");
+    const placedStones = new Map();
+    let currentPlayer = 0;
+    let players = [];
+    let captures = { blue: 0, red: 0, yellow: 0, green: 0 };
+    let scores = { blue: 0, red: 0, yellow: 0, green: 0 };
+    let gameOver = false;
+    let playerCount = 0;
+    let isTournament = false;
+    let tournamentGameCount = 0;
+    const maxTournamentGames = 5;
+    let moveHistory = [];
+
+    const boardImage = document.getElementById("boardImage");
+    const stoneColors = ["blue", "red", "yellow", "green"];
+    const stoneImages = ["stone.png", "stone2.png", "stone3.png", "stone4.png"];
+    const turnColors = ["#6666FF", "#FF6666", "#FFFF00", "#00FF00"];
+
+    const placeSound = document.getElementById("placeSound");
+    const captureSound = document.getElementById("captureSound");
+    const winSound = document.getElementById("winSound");
+
+    function showPlayers(numPlayers) {
+        playerCount = numPlayers;
+        document.getElementById("player1Entry").style.display = "block";
+        document.getElementById("player2Entry").style.display = "block";
+        document.getElementById("player3Entry").style.display = numPlayers === 4 ? "block" : "none";
+        document.getElementById("player4Entry").style.display = numPlayers === 4 ? "block" : "none";
+        document.getElementById("playButton").style.display = "block";
+        document.getElementById("tournamentButton").style.display = "block";
+        document.getElementById("play2Button").style.display = "none";
+        document.getElementById("play4Button").style.display = "none";
+    }
+
+    function startGame(tournamentMode) {
+        isTournament = tournamentMode;
+        tournamentGameCount = 0;
+        scores = { blue: 0, red: 0, yellow: 0, green: 0 };
+        players = [];
+        players.push(document.getElementById("player1Name").value || "Player 1");
+        players.push(document.getElementById("player2Name").value || "Player 2");
+        if (playerCount === 4) {
+            players.push(document.getElementById("player3Name").value || "Player 3");
+            players.push(document.getElementById("player4Name").value || "Player 4");
+        }
+
+        document.getElementById("nameEntryScreen").style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("nameEntryScreen").style.display = "none";
+            document.getElementById("gameScreen").style.display = "block";
+            document.getElementById("gameScreen").style.opacity = "1";
+            document.getElementById("scoreboard").style.display = "block";
+            document.getElementById("turnDisplay").style.display = "block";
+            document.getElementById("undoButton").style.display = "block";
+            updateTurnDisplay();
+        }, 500);
+    }
+
+    function updateTurnDisplay() {
+        document.getElementById("turnDisplay").innerText = `${players[currentPlayer]}'s Turn`;
+        document.getElementById("turnDisplay").style.color = turnColors[currentPlayer];
+        document.getElementById("yellowCaptured").parentElement.style.display = playerCount === 4 ? "block" : "none";
+        document.getElementById("greenCaptured").parentElement.style.display = playerCount === 4 ? "block" : "none";
+    }
+
+    function updateScoreboard() {
+        document.getElementById("blueCaptured").innerText = captures.blue;
+        document.getElementById("redCaptured").innerText = captures.red;
+        document.getElementById("yellowCaptured").innerText = captures.yellow;
+        document.getElementById("greenCaptured").innerText = captures.green;
+    }
+
+    function updateScores(winnerIndex, winByRow) {
+        if (!isTournament) return;
+        const winnerColor = stoneColors[winnerIndex];
+        scores[winnerColor] += 5;
+        if (winByRow) {
+            scores[winnerColor] += 10;
+        }
+        scores.blue += captures.blue;
+        scores.red += captures.red;
+        if (playerCount === 4) {
+            scores.yellow += captures.yellow;
+            scores.green += captures.green;
+        }
+    }
+
+    function displayScores() {
+        if (!isTournament) return;
+        let scoreText = `Game ${tournamentGameCount} Scores:<br>`;
+        scoreText += `${players[0]} (Blue): ${scores.blue}<br>`;
+        scoreText += `${players[1]} (Red): ${scores.red}<br>`;
+        if (playerCount === 4) {
+            scoreText += `${players[2]} (Yellow): ${scores.yellow}<br>`;
+            scoreText += `${players[3]} (Green): ${scores.green}<br>`;
+        }
+        document.getElementById("scoreDisplay").innerHTML = scoreText;
+    }
+
+    function endTournament() {
+        let maxScore = -1;
+        let tournamentWinner = "";
+        for (let i = 0; i < playerCount; i++) {
+            const color = stoneColors[i];
+            if (scores[color] > maxScore) {
+                maxScore = scores[color];
+                tournamentWinner = players[i];
+            }
+        }
+        document.getElementById("tournamentWinner").innerText = `${tournamentWinner} Wins the Tournament!`;
+        let finalScoreText = "Final Scores:<br>";
+        finalScoreText += `${players[0]} (Blue): ${scores.blue}<br>`;
+        finalScoreText += `${players[1]} (Red): ${scores.red}<br>`;
+        if (playerCount === 4) {
+            finalScoreText += `${players[2]} (Yellow): ${scores.yellow}<br>`;
+            finalScoreText += `${players[3]} (Green): ${scores.green}<br>`;
+        }
+        document.getElementById("finalScores").innerHTML = finalScoreText;
+        document.getElementById("gameScreen").style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("winScreen").style.display = "none";
+            document.getElementById("tournamentEndScreen").style.display = "block";
+            document.getElementById("tournamentEndScreen").style.opacity = "0";
+            document.getElementById("turnDisplay").style.display = "none";
+            document.getElementById("undoButton").style.display = "none";
+            setTimeout(() => document.getElementById("tournamentEndScreen").style.opacity = "1", 10);
+        }, 500);
+    }
+
+    function placeStone(x, y) {
+        if (gameOver) return;
+
+        const minPos = boardOffset;
+        const maxPos = boardOffset + (size - 1) * spacing;
+
+        if (x < minPos || x > maxPos || y < minPos || y > maxPos) return;
+
+        let key = `${x}-${y}`;
+        if (placedStones.has(key)) return;
+
+        let stone = document.createElementNS("http://www.w3.org/2000/svg", "image");
+        let color = stoneColors[currentPlayer];
+        stone.setAttribute("x", x - stoneSize / 2);
+        stone.setAttribute("y", y - stoneSize / 2);
+        stone.setAttribute("width", stoneSize);
+        stone.setAttribute("height", stoneSize);
+        stone.setAttribute("href", stoneImages[currentPlayer]);
+        stone.setAttribute("class", "stone");
+        svg.appendChild(stone);
+        placedStones.set(key, { element: stone, color });
+
+        let move = {
+            player: currentPlayer,
+            key: key,
+            capturesBefore: { ...captures },
+            capturedStones: [],
+            stonesBeforeCapture: new Map(placedStones)
+        };
+
+        let captureOccurred = checkCapture(x, y, color);
+        if (captureOccurred) {
+            move.capturedStones = move.stonesBeforeCapture.keys()
+                .filter(k => !placedStones.has(k))
+                .map(k => ({ key: k, ...move.stonesBeforeCapture.get(k) }));
+        }
+
+        moveHistory.push(move);
+
+        if (!captureOccurred) {
+            placeSound.currentTime = 0;
+            placeSound.play();
+        }
+
+        checkWin(x, y, color);
+
+        currentPlayer = (currentPlayer + 1) % playerCount;
+        updateTurnDisplay();
+    }
+
+    function checkCapture(x, y, color) {
+        let enemyColors = stoneColors.filter(c => c !== color);
+        let directions = [
+            { dx: spacing, dy: 0 },
+            { dx: 0, dy: spacing },
+            { dx: spacing, dy: spacing },
+            { dx: spacing, dy: -spacing }
+        ];
+
+        let captured = false;
+
+        directions.forEach(({ dx, dy }) => {
+            let mid1 = `${x + dx}-${y + dy}`;
+            let mid2 = `${x + 2 * dx}-${y + 2 * dy}`;
+            let cap = `${x + 3 * dx}-${y + 3 * dy}`;
+
+            let mid3 = `${x - dx}-${y - dy}`;
+            let mid4 = `${x - 2 * dx}-${y - 2 * dy}`;
+            let cap2 = `${x - 3 * dx}-${y - 3 * dy}`;
+
+            if (placedStones.has(mid1) && placedStones.has(mid2) && placedStones.has(cap)) {
+                if (enemyColors.includes(placedStones.get(mid1).color) &&
+                    enemyColors.includes(placedStones.get(mid2).color) &&
+                    placedStones.get(cap).color === color) {
+                    captureStones([mid1, mid2], color);
+                    captured = true;
+                }
+            }
+            if (placedStones.has(mid3) && placedStones.has(mid4) && placedStones.has(cap2)) {
+                if (enemyColors.includes(placedStones.get(mid3).color) &&
+                    enemyColors.includes(placedStones.get(mid4).color) &&
+                    placedStones.get(cap2).color === color) {
+                    captureStones([mid3, mid4], color);
+                    captured = true;
+                }
+            }
+        });
+
+        if (captured) {
+            captureSound.currentTime = 0;
+            captureSound.play();
+        }
+
+        if (captures.blue >= 5) endGame(0, false);
+        if (captures.red >= 5) endGame(1, false);
+        if (playerCount === 4) {
+            if (captures.yellow >= 5) endGame(2, false);
+            if (captures.green >= 5) endGame(3, false);
+        }
+
+        return captured;
+    }
+
+    function checkWin(x, y, color) {
+        let directions = [
+            { dx: spacing, dy: 0 },
+            { dx: 0, dy: spacing },
+            { dx: spacing, dy: spacing },
+            { dx: spacing, dy: -spacing }
+        ];
+
+        const winCondition = playerCount === 4 ? 4 : 5;
+
+        for (let { dx, dy } of directions) {
+            let count = 1;
+
+            for (let dir of [-1, 1]) {
+                let step = 1;
+                while (true) {
+                    let nx = x + step * dx * dir;
+                    let ny = y + step * dy * dir;
+                    let key = `${nx}-${ny}`;
+                    if (placedStones.has(key) && placedStones.get(key).color === color) {
+                        count++;
+                        step++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            if (count >= winCondition) {
+                endGame(currentPlayer, true);
+                return;
+            }
+        }
+    }
+
+    function captureStones(keys, capturingColor) {
+        const scoreboard = document.getElementById("scoreboard");
+        const capturedContainer = document.getElementById(`${capturingColor}CapturedStones`);
+
+        keys.forEach(key => {
+            let stone = placedStones.get(key).element;
+            let capturedStoneColor = placedStones.get(key).color;
+            let stoneImage = stone.getAttribute("href");
+
+            let startX = parseFloat(stone.getAttribute("x")) + stoneSize / 2;
+            let startY = parseFloat(stone.getAttribute("y")) + stoneSize / 2;
+
+            let animatedStone = document.createElement("img");
+            animatedStone.src = stoneImage;
+            animatedStone.classList.add("captured-stone");
+            animatedStone.style.position = "absolute";
+            animatedStone.style.left = `${startX + svg.getBoundingClientRect().left}px`;
+            animatedStone.style.top = `${startY + svg.getBoundingClientRect().top}px`;
+            document.body.appendChild(animatedStone);
+
+            svg.removeChild(stone);
+            placedStones.delete(key);
+
+            let targetRect = capturedContainer.getBoundingClientRect();
+            let targetX = targetRect.left + (captures[capturingColor] % 5) * 25;
+            let targetY = targetRect.top + Math.floor(captures[capturingColor] / 5) * 25;
+
+            requestAnimationFrame(() => {
+                animatedStone.style.transform = `translate(${targetX - startX - svg.getBoundingClientRect().left}px, ${targetY - startY - svg.getBoundingClientRect().top}px)`;
+                setTimeout(() => {
+                    animatedStone.style.position = "static";
+                    animatedStone.style.transform = "none";
+                    capturedContainer.appendChild(animatedStone);
+                }, 500);
+            });
+        });
+
+        captures[capturingColor] = (captures[capturingColor] || 0) + 1;
+        updateScoreboard();
+    }
+
+    function undoTurn() {
+        if (gameOver || moveHistory.length === 0) return;
+
+        let lastMove = moveHistory.pop();
+        let { player, key, capturesBefore, capturedStones } = lastMove;
+
+        let stone = placedStones.get(key).element;
+        svg.removeChild(stone);
+        placedStones.delete(key);
+
+        capturedStones.forEach(({ key, element, color }) => {
+            let restoredStone = document.createElementNS("http://www.w3.org/2000/svg", "image");
+            restoredStone.setAttribute("x", element.getAttribute("x"));
+            restoredStone.setAttribute("y", element.getAttribute("y"));
+            restoredStone.setAttribute("width", stoneSize);
+            restoredStone.setAttribute("height", stoneSize);
+            restoredStone.setAttribute("href", stoneImages[stoneColors.indexOf(color)]);
+            restoredStone.setAttribute("class", "stone");
+            svg.appendChild(restoredStone);
+            placedStones.set(key, { element: restoredStone, color });
+        });
+
+        stoneColors.forEach(color => {
+            let container = document.getElementById(`${color}CapturedStones`);
+            while (container.children.length > capturesBefore[color]) {
+                container.removeChild(container.lastChild);
+            }
+        });
+
+        captures = { ...capturesBefore };
+        updateScoreboard();
+
+        currentPlayer = player;
+        updateTurnDisplay();
+    }
+
+    function endGame(winnerIndex, winByRow) {
+        gameOver = true;
+        if (isTournament) {
+            tournamentGameCount++;
+            updateScores(winnerIndex, winByRow);
+        }
+        document.getElementById("gameScreen").style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("turnDisplay").style.display = "none";
+            document.getElementById("undoButton").style.display = "none";
+            if (isTournament && tournamentGameCount < maxTournamentGames) {
+                document.getElementById("winScreen").style.display = "block";
+                document.getElementById("winScreen").style.opacity = "0";
+                setTimeout(() => document.getElementById("winScreen").style.opacity = "1", 10);
+                document.getElementById("winScreenMessage").innerText = `${players[winnerIndex]} Wins Game ${tournamentGameCount}!`;
+                displayScores();
+            } else if (isTournament && tournamentGameCount === maxTournamentGames) {
+                endTournament();
+            } else {
+                document.getElementById("winScreen").style.display = "block";
+                document.getElementById("winScreen").style.opacity = "0";
+                setTimeout(() => document.getElementById("winScreen").style.opacity = "1", 10);
+                document.getElementById("winScreenMessage").innerText = `${players[winnerIndex]} Wins!`;
+            }
+            winSound.currentTime = 0;
+            winSound.play();
+        }, 500);
+    }
+
+    function rematch() {
+        gameOver = false;
+        placedStones.clear();
+        captures = { blue: 0, red: 0, yellow: 0, green: 0 };
+        moveHistory = [];
+        updateScoreboard();
+
+        document.getElementById("blueCapturedStones").innerHTML = "";
+        document.getElementById("redCapturedStones").innerHTML = "";
+        document.getElementById("yellowCapturedStones").innerHTML = "";
+        document.getElementById("greenCapturedStones").innerHTML = "";
+
+        svg.innerHTML = '';
+        svg.appendChild(boardImage);
+
+        currentPlayer = 0;
+        updateTurnDisplay();
+
+        document.getElementById("winScreen").style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("winScreen").style.display = "none";
+            document.getElementById("gameScreen").style.display = "block";
+            document.getElementById("gameScreen").style.opacity = "0";
+            document.getElementById("turnDisplay").style.display = "block";
+            document.getElementById("undoButton").style.display = "block";
+            setTimeout(() => document.getElementById("gameScreen").style.opacity = "1", 10);
+        }, 500);
+    }
+
+    function quitGame() {
+        document.getElementById("gameScreen").style.opacity = "0";
+        document.getElementById("winScreen").style.opacity = "0";
+        document.getElementById("tournamentEndScreen").style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("winScreen").style.display = "none";
+            document.getElementById("tournamentEndScreen").style.display = "none";
+            document.getElementById("nameEntryScreen").style.display = "block";
+            document.getElementById("nameEntryScreen").style.opacity = "0";
+            document.getElementById("turnDisplay").style.display = "block";
+            document.getElementById("undoButton").style.display = "none";
+            setTimeout(() => {
+                document.getElementById("nameEntryScreen").style.opacity = "1";
+                location.reload();
+            }, 10);
+        }, 500);
+    }
+
+    function quitGameCompletely() {
+        document.getElementById("nameEntryScreen").style.opacity = "0";
+        setTimeout(() => window.close(), 500);
+    }
+
+    svg.addEventListener("click", (event) => {
+        let rect = svg.getBoundingClientRect();
+        let clickX = event.clientX - rect.left;
+        let clickY = event.clientY - rect.top;
+
+        let snappedX = Math.round((clickX - boardOffset) / spacing) * spacing + boardOffset;
+        let snappedY = Math.round((clickY - boardOffset) / spacing) * spacing + boardOffset;
+
+        placeStone(snappedX, snappedY);
+    });
+
+    /* New JavaScript additions for sound toggle */
+    let isSoundOn = true;
+function toggleSound() {
+    isSoundOn = !isSoundOn;
+    document.getElementById("soundToggleButton").style.backgroundImage = `url('${isSoundOn ? 'on.png' : 'off.png'}')`;
+    placeSound.muted = !isSoundOn;
+    captureSound.muted = !isSoundOn;
+    winSound.muted = !isSoundOn;
+}
+</script>
+
+</body>
+</html>
