@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>19x19 Bead Capture Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             display: flex;
@@ -12,7 +13,7 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            font-family: fantasy;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             background-image: url('background.png');
             background-size: cover;
             background-position: center;
@@ -36,7 +37,7 @@
             font-weight: bold;
             display: none;
             color: #d4a373;
-            font-family: 'Press Start 2P', cursive;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             padding: 15px;
             padding-top: 50px; /* Added to stretch upwards for turn display */
             padding-bottom: 80px;
@@ -47,14 +48,14 @@
             top: 20px;
             right: 20px;
             font-size: 24px;
-            font-family: fantasy;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
         }
         #winMessage {
             font-size: 30px;
             color: green;
             font-weight: bold;
             display: none;
-            font-family: fantasy;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
         }
         #gameScreen {
             display: block;
@@ -81,7 +82,7 @@
             border: none;
             font-size: 22px;
             cursor: pointer;
-            font-family: fantasy;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             transition: transform 0.2s ease;
             position: relative;
             z-index: 1;
@@ -94,7 +95,7 @@
             text-align: center;
             font-size: 18px;
             margin-bottom: 20px;
-            font-family: fantasy;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             color: white;
             display: none;
         }
@@ -105,7 +106,7 @@
             color: white;
             background-color: rgba(255, 255, 255, 0.2);
             border: 1px solid white;
-            font-family: fantasy;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
         }
         button {
             padding: 40px 80px;
@@ -114,7 +115,7 @@
             background-color: transparent;
             color: white;
             border: none;
-            font-family: fantasy;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             transition: transform 0.2s ease;
             background-size: contain;
             background-repeat: no-repeat;
@@ -160,14 +161,14 @@
         }
         #winScreenMessage, #tournamentWinner {
             color: white;
-            font-family: fantasy;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             font-size: 24px;
         }
         #scoreDisplay, #finalScores {
             color: white;
             font-size: 18px;
             margin-top: 10px;
-            font-family: fantasy;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
         }
         .captured-stones {
             display: flex;
@@ -187,7 +188,7 @@
         /* Modified CSS for sound toggle button */
         #soundToggleButton {
             font-size: 20px;
-            font-family: fantasy;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             background-color: transparent;
             color: white;
             border: 1px solid white;
@@ -200,25 +201,43 @@
         #soundToggleButton:hover {
             transform: scale(1.05);
         }
+        /* Inspired by note fixed bottom-right so it shows on setup and game screens */
+        #inspiredBy {
+            position: fixed;
+            right: 18px;
+            bottom: 12px;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+            opacity: 1;
+            pointer-events: none;
+            text-align: center;
+            background: rgba(0,0,0,0.45);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
 
 <div class="game-container" id="nameEntryScreen">
     <div class="name-entry" id="player1Entry">
-        <label for="player1Name">Enter Player 1's name (Blue Stones): <br></label>
+        <label for="player1Name">Enter Player 1's name <img src="stone.png" alt="Blue stone" style="width:20px;height:20px;vertical-align:middle;margin-left:6px;">: <br></label>
         <input type="text" id="player1Name" placeholder="Player 1" maxlength="12" />
     </div>
     <div class="name-entry" id="player2Entry">
-        <label for="player2Name">Enter Player 2's name (Red Stones): <br></label>
+        <label for="player2Name">Enter Player 2's name <img src="stone2.png" alt="Red stone" style="width:20px;height:20px;vertical-align:middle;margin-left:6px;">: <br></label>
         <input type="text" id="player2Name" placeholder="Player 2" maxlength="12" />
     </div>
     <div class="name-entry" id="player3Entry">
-        <label for="player3Name">Enter Player 3's name (Yellow Stones): <br></label>
+        <label for="player3Name">Enter Player 3's name <img src="stone3.png" alt="Yellow stone" style="width:20px;height:20px;vertical-align:middle;margin-left:6px;">: <br></label>
         <input type="text" id="player3Name" placeholder="Player 3" maxlength="12" />
     </div>
     <div class="name-entry" id="player4Entry">
-        <label for="player4Name">Enter Player 4's name (Green Stones): <br></label>
+        <label for="player4Name">Enter Player 4's name <img src="stone4.png" alt="Green stone" style="width:20px;height:20px;vertical-align:middle;margin-left:6px;">: <br></label>
         <input type="text" id="player4Name" placeholder="Player 4" maxlength="12" />
     </div>
     <button id="play2Button" onclick="showPlayers(2)"></button>
@@ -252,6 +271,9 @@
     <button id="undoButton" onclick="undoTurn()"></button>
     <button id="soundToggleButton" onclick="toggleSound()" style="background-image: url('on.png'); width: 60px; height: 30px; background-size: contain; background-repeat: no-repeat; background-position: center; border: none; background-color: transparent; cursor: pointer;"></button>
 </div>
+
+<!-- fixed 'Inspired by Pente' label shown bottom-right on both screens -->
+<div id="inspiredBy">Inspired by Pente</div>
 
 <div id="winScreen">
     <h2 id="winScreenMessage"></h2>
