@@ -6,88 +6,273 @@
     <title>19x19 Bead Capture Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: 1fr 800px 1fr;
             height: 100vh;
             margin: 0;
+            padding: 0;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             background-image: url('background.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             position: relative;
-            gap: 60px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            align-items: center;
         }
         #mainContent {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            width: 800px;
+            min-width: 800px;
+            flex-shrink: 0;
+            grid-column: 2;
         }
         #buttonColumn {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 10px;
+            gap: 0px;
             align-items: center;
             justify-items: center;
             width: auto;
+            margin: 0;
+            padding: 0;
+            flex-shrink: 0;
+            grid-column: 3;
         }
         #playButtonContainer {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 6px;
+            gap: 0px;
             align-items: center;
             justify-items: center;
             width: auto;
-            margin: 10px 0;
+            margin: 0;
+        }
+        .button-with-info {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        .info-icon {
+            position: absolute;
+            left: calc(50% + 90px);
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(212, 163, 115, 0.7);
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+        .info-icon:hover {
+            transform: scale(1.1);
+            background-color: rgba(255, 255, 255, 0.25);
+            border-color: #d4a373;
+        }
+        #infoModal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+        }
+        #infoModalContent {
+            background: linear-gradient(135deg, rgba(20, 20, 40, 0.99), rgba(40, 30, 50, 0.99));
+            border: 3px solid #d4a373;
+            border-radius: 25px;
+            padding: 50px 60px;
+            max-width: 650px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8), 0 0 80px rgba(212, 163, 115, 0.2);
+            position: relative;
+        }
+        #infoModalContent h2 {
+            color: #FFD700;
+            font-size: 40px;
+            margin: 0 0 25px 0;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+            text-align: center;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        #infoModalContent p {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 19px;
+            line-height: 1.7;
+            margin: 16px 0;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+            font-weight: 500;
+        }
+        #infoModalContent strong {
+            color: #FFD700;
+            font-weight: 700;
+        }
+        #infoModalContent ul {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 19px;
+            line-height: 2;
+            margin: 20px 0;
+            padding-left: 30px;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+            font-weight: 500;
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .close-modal:hover {
+            color: #d4a373;
+        }
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-in-out;
+            width: 100%;
+            margin: 0;
+            padding: 0;
         }
         #mainButtonRow {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 6px;
+            gap: 0px;
             align-items: center;
             justify-items: center;
             width: auto;
-            margin: 10px 0;
+            margin: 0;
         }
         #quitButtonRow {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 6px;
+            gap: 0px;
             align-items: center;
             justify-items: center;
             width: auto;
-            margin: 10px 0;
+            margin: 0;
         }
         svg {
-            border: 2px solid white;
+            border: 3px solid rgba(212, 163, 115, 0.8);
+            border-radius: 8px;
             width: 800px;
             height: 800px;
+            min-width: 800px;
+            min-height: 800px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            background-color: rgba(255, 255, 255, 0.02);
+            display: block;
+            margin: 0;
+            padding: 0;
+            flex-shrink: 0;
         }
         .scoreboard {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            font-size: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            align-items: start;
+            justify-items: stretch;
+            font-size: 16px;
             font-weight: bold;
             display: none;
             color: #d4a373;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
-            padding: 15px;
+            padding: 0;
             margin: 0;
-            border-radius: 10px;
+            border-radius: 0;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            width: 100%;
+        }
+        .scoreboard > p:first-child {
+            grid-column: 1 / -1;
+            margin: 0 0 15px 0;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            color: #FFD700;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            letter-spacing: 0.5px;
+        }
+        .score-item {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border-left: 3px solid rgba(212, 163, 115, 0.6);
+            border-radius: 6px;
+        }
+        .score-item p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .score-item .captured-stones {
+            width: 100%;
+            justify-content: flex-start;
+        }
+        .button-group {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            width: fit-content;
+            margin-top: 15px;
+            padding: 12px 20px;
+            border: 2px solid rgba(212, 163, 115, 0.5);
+            border-radius: 12px;
+            background: rgba(20, 20, 40, 0.7);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         #turnDisplay {
             position: static;
-            font-size: 24px;
+            font-size: 28px;
+            font-weight: 700;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             color: white;
             margin: 0;
-            padding: 0;
+            padding: 8px 16px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+            letter-spacing: 0.5px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
         #winMessage {
             font-size: 30px;
@@ -115,78 +300,109 @@
             opacity: 0;
         }
         #tournamentEndScreen {
-            padding: 20px;
-            border-radius: 10px;
-        }
-        #winOverlay {
-            background: rgba(20, 20, 40, 0.95);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(20, 20, 40, 0.99), rgba(40, 30, 50, 0.99));
             border: 3px solid #d4a373;
-            border-radius: 20px;
-            padding: 80px 150px;
+            border-radius: 25px;
+            padding: 60px 100px;
             text-align: center;
             max-width: 900px;
-            box-shadow: 0 0 40px rgba(212, 163, 115, 0.5);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8), 0 0 80px rgba(212, 163, 115, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        #winOverlay {
+            background: linear-gradient(135deg, rgba(20, 20, 40, 0.97), rgba(30, 25, 45, 0.97));
+            border: 3px solid #d4a373;
+            border-radius: 25px;
+            padding: 30px 50px;
+            text-align: center;
+            max-width: 1000px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.7), 0 0 60px rgba(212, 163, 115, 0.3);
         }
         #winScreenMessage {
-            font-size: 64px;
+            font-size: 72px;
             font-weight: bold;
             color: #FFD700;
-            margin: 0 0 15px 0;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+            margin: 0 0 5px 0;
+            text-shadow: 0 6px 15px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(255, 215, 0, 0.3);
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+            letter-spacing: 1px;
         }
         #winDetails {
-            font-size: 32px;
-            color: #d4a373;
-            margin: 0 0 25px 0;
+            font-size: 36px;
+            color: #FFD700;
+            margin: 0 0 20px 0;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
         #scoreDisplay {
             color: white;
             font-size: 18px;
-            margin: 25px 0;
+            margin: 12px 0;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
-            line-height: 1.8;
+            line-height: 1.6;
         }
         #capturesGrid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
             margin-top: 20px;
+            width: 100%;
         }
         .playerCaptureBox {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid #d4a373;
-            border-radius: 10px;
-            padding: 15px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
+            border: 2px solid rgba(212, 163, 115, 0.7);
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease;
+        }
+        .playerCaptureBox:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(212, 163, 115, 0.2);
         }
         .playerCaptureBox p {
-            font-weight: bold;
+            font-weight: 700;
             text-transform: uppercase;
+            margin: 0 0 8px 0;
+            letter-spacing: 0.5px;
+            font-size: 18px;
         }
         .captureBeads {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 8px;
             justify-items: center;
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .capturePair {
             display: flex;
-            gap: 2px;
+            gap: 3px;
             align-items: center;
             justify-content: center;
+            padding: 5px;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+        }
+        .capturePair:hover {
+            transform: scale(1.1);
         }
         #winButtonsContainer {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 40px;
+            gap: 4px;
+            margin-top: 20px;
             justify-items: center;
         }
         #rematchButton, #quitGameButton {
             width: 160px;
-            height: 100px;
+            height: 80px;
             padding: 0;
             background-size: contain;
             background-repeat: no-repeat;
@@ -201,20 +417,34 @@
         }
         .name-entry {
             text-align: center;
-            font-size: 18px;
-            margin-bottom: 20px;
+            font-size: 20px;
+            margin-bottom: 16px;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             color: white;
             display: none;
+            font-weight: 500;
+            letter-spacing: 0.3px;
         }
         input[type="text"] {
-            padding: 8px;
-            font-size: 16px;
-            margin: 5px;
+            padding: 12px 16px;
+            font-size: 18px;
+            margin: 8px;
             color: white;
-            background-color: rgba(255, 255, 255, 0.2);
-            border: 1px solid white;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(212, 163, 115, 0.6);
+            border-radius: 8px;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        input[type="text"]:focus {
+            background-color: rgba(255, 255, 255, 0.25);
+            border-color: #d4a373;
+            outline: none;
+            box-shadow: 0 0 15px rgba(212, 163, 115, 0.4);
+        }
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
         button {
             padding: 0;
@@ -224,7 +454,7 @@
             color: white;
             border: none;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, filter 0.2s ease;
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -232,11 +462,15 @@
             z-index: 1;
             margin: 0;
             width: 160px;
-            height: 100px;
+            height: 80px;
         }
         button:hover {
-            transform: scale(1.05);
+            transform: scale(1.08);
             background-color: transparent;
+            filter: brightness(1.1);
+        }
+        button:active {
+            transform: scale(0.98);
         }
         #play2Button {
             background-image: url('play2.png');
@@ -263,45 +497,59 @@
         }
         #undoButton {
             background-image: url('undo.png');
-            padding: 30px 60px;
             display: none;
             order: 2;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        #undoButton:hover {
+            transform: scale(1.08);
+            filter: brightness(1.1);
         }
         #quitGameplayButton {
             background-image: url('quitGame.png');
-            padding: 30px 60px;
             display: none;
-            margin-top: 0;
             order: -1;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        #quitGameplayButton:hover {
+            transform: scale(1.08);
+            filter: brightness(1.1);
         }
         #mainMenuButton {
             background-image: url('mainMenu.png');
-            padding: 30px 60px;
             display: none;
-            margin-top: 0;
             order: -1;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        #mainMenuButton:hover {
+            transform: scale(1.08);
+            filter: brightness(1.1);
         }
         .stone {
             pointer-events: none;
         }
         #winScreenMessage, #tournamentWinner {
-            color: white;
+            color: #FFD700;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
-            font-size: 36px;
+            font-size: 60px;
             font-weight: bold;
             margin-bottom: 20px;
+            text-shadow: 0 6px 15px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(255, 215, 0, 0.3);
+            letter-spacing: 1px;
         }
         #scoreDisplay, #finalScores {
-            color: white;
-            font-size: 18px;
-            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 20px;
+            margin-top: 25px;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+            font-weight: 500;
+            line-height: 2;
         }
         .captured-stones {
             display: flex;
             flex-wrap: wrap;
             max-width: 150px;
-            margin-top: 5px;
+            margin-top: 0px;
         }
         .captured-stone {
             width: 20px;
@@ -318,16 +566,26 @@
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             background-color: transparent;
             color: white;
-            border: 1px solid white;
-            padding: 5px 10px;
+            border: 2px solid rgba(212, 163, 115, 0.6);
+            padding: 0;
             cursor: pointer;
-            transition: transform 0.2s ease;
-            margin-top: 0;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            margin: 0;
             position: relative;
             order: -1;
+            border-radius: 8px;
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            min-height: 60px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            flex-shrink: 0;
         }
         #soundToggleButton:hover {
-            transform: scale(1.05);
+            transform: scale(1.08);
+            border-color: #d4a373;
         }
         /* Back button shown on player-selection to return to main menu */
         #backButton {
@@ -344,34 +602,42 @@
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        #backButton:hover {
+            transform: scale(1.08);
+            filter: brightness(1.1);
         }
         /* Main menu title */
         #main-title {
             color: white;
-            font-size: 48px;
-            margin: 10px 0 20px 0;
+            font-size: 56px;
+            margin: 20px 0 40px 0;
             text-align: center;
-            text-shadow: 0 3px 8px rgba(0,0,0,0.6);
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.7), 0 2px 4px rgba(212, 163, 115, 0.3);
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             pointer-events: none;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
         /* Inspired by note fixed bottom-right so it shows on setup and game screens */
         #inspiredBy {
             position: fixed;
-            right: 18px;
-            bottom: 12px;
-            color: white;
-            font-size: 24px;
+            right: 20px;
+            bottom: 15px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 26px;
             font-weight: 700;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             opacity: 1;
             pointer-events: none;
             text-align: center;
-            background: rgba(0,0,0,0.45);
-            padding: 8px 12px;
-            border-radius: 8px;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.55);
+            padding: 10px 15px;
+            border-radius: 10px;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.8);
             z-index: 9999;
+            letter-spacing: 0.3px;
         }
     </style>
 </head>
@@ -382,19 +648,19 @@
     <h1 id="main-title">Glass Bead Capture</h1>
     <div class="name-entry" id="player1Entry">
         <label for="player1Name">Enter Player 1's name <img src="stone.png" alt="Blue stone" style="width:20px;height:20px;vertical-align:middle;margin-left:6px;">: <br></label>
-        <input type="text" id="player1Name" placeholder="Player 1" maxlength="12" />
+        <input type="text" id="player1Name" placeholder="Player 1" maxlength="8" />
     </div>
     <div class="name-entry" id="player2Entry">
         <label for="player2Name">Enter Player 2's name <img src="stone2.png" alt="Red stone" style="width:20px;height:20px;vertical-align:middle;margin-left:6px;">: <br></label>
-        <input type="text" id="player2Name" placeholder="Player 2" maxlength="12" />
+        <input type="text" id="player2Name" placeholder="Player 2" maxlength="8" />
     </div>
     <div class="name-entry" id="player3Entry">
         <label for="player3Name">Enter Player 3's name <img src="stone3.png" alt="Yellow stone" style="width:20px;height:20px;vertical-align:middle;margin-left:6px;">: <br></label>
-        <input type="text" id="player3Name" placeholder="Player 3" maxlength="12" />
+        <input type="text" id="player3Name" placeholder="Player 3" maxlength="8" />
     </div>
     <div class="name-entry" id="player4Entry">
         <label for="player4Name">Enter Player 4's name <img src="stone4.png" alt="Green stone" style="width:20px;height:20px;vertical-align:middle;margin-left:6px;">: <br></label>
-        <input type="text" id="player4Name" placeholder="Player 4" maxlength="12" />
+        <input type="text" id="player4Name" placeholder="Player 4" maxlength="8" />
     </div>
     <div id="mainButtonRow">
         <button id="play2Button" onclick="showPlayers(2)"></button>
@@ -402,7 +668,10 @@
     </div>
     <div id="playButtonContainer">
         <button id="playButton" onclick="startGame(false)"></button>
-        <button id="tournamentButton" onclick="startGame(true)"></button>
+        <div class="button-with-info">
+            <button id="tournamentButton" onclick="startGame(true)"></button>
+            <div class="info-icon" onclick="showTournamentInfo()" title="What is Tournament Mode?">?</div>
+        </div>
         <button id="backButton" aria-label="Back" onclick="backToMenu()"></button>
     </div>
     <div id="quitButtonRow">
@@ -423,17 +692,27 @@
 <h2 id="turnDisplay"></h2>
 <div id="scoreboard" class="scoreboard">
     <p>Captured Pairs</p>
-    <p id="blueScore">Blue: <span id="blueCaptured">0</span></p>
-    <div id="blueCapturedStones" class="captured-stones"></div>
-    <p id="redScore">Red: <span id="redCaptured">0</span></p>
-    <div id="redCapturedStones" class="captured-stones"></div>
-    <p id="yellowScore">Yellow: <span id="yellowCaptured">0</span></p>
-    <div id="yellowCapturedStones" class="captured-stones"></div>
-    <p id="greenScore">Green: <span id="greenCaptured">0</span></p>
-    <div id="greenCapturedStones" class="captured-stones"></div>
-    <button id="undoButton" onclick="undoTurn()"></button>
-    <button id="soundToggleButton" onclick="toggleSound()" style="background-image: url('on.png'); width: 60px; height: 30px; background-size: contain; background-repeat: no-repeat; background-position: center; border: none; background-color: transparent; cursor: pointer;"></button>
-    <button id="mainMenuButton" onclick="quitToMainMenu()"></button>
+    <div class="score-item">
+        <p id="blueScore">Blue: <span id="blueCaptured">0</span></p>
+        <div id="blueCapturedStones" class="captured-stones"></div>
+    </div>
+    <div class="score-item">
+        <p id="redScore">Red: <span id="redCaptured">0</span></p>
+        <div id="redCapturedStones" class="captured-stones"></div>
+    </div>
+    <div class="score-item">
+        <p id="yellowScore">Yellow: <span id="yellowCaptured">0</span></p>
+        <div id="yellowCapturedStones" class="captured-stones"></div>
+    </div>
+    <div class="score-item">
+        <p id="greenScore">Green: <span id="greenCaptured">0</span></p>
+        <div id="greenCapturedStones" class="captured-stones"></div>
+    </div>
+    <div class="button-group">
+        <button id="undoButton" onclick="undoTurn()"></button>
+        <button id="soundToggleButton" onclick="toggleSound()" style="background-image: url('on.png'); width: 60px; background-size: contain; background-repeat: no-repeat; background-position: center; border: none; background-color: transparent; cursor: pointer;"></button>
+        <button id="mainMenuButton" onclick="quitToMainMenu()"></button>
+    </div>
 </div>
 </div>
 
@@ -455,10 +734,27 @@
     <button id="quitGameButton" onclick="quitGame()"></button>
 </div>
 
+<div id="infoModal" onclick="closeModalIfOutside(event)">
+    <div id="infoModalContent">
+        <span class="close-modal" onclick="closeTournamentInfo()">&times;</span>
+        <h2>Tournament Mode</h2>
+        <p>Tournament Mode is a competitive series where you play <strong>5 games</strong> in a row with point tracking!</p>
+        <p><strong>How Scoring Works:</strong></p>
+        <ul>
+            <li><strong>Win by 5-in-a-row:</strong> +15 points (5 base + 10 bonus)</li>
+            <li><strong>Win by capturing 5 pairs:</strong> +5 points</li>
+            <li><strong>Each captured pair:</strong> +1 point</li>
+        </ul>
+        <p>After 5 games, the player with the most total points wins the tournament!</p>
+        <p>Perfect for competitive play sessions with friends or family.</p>
+    </div>
+</div>
 
 <audio id="placeSound" src="place.mp3" preload="auto"></audio>
 <audio id="captureSound" src="capture.mp3" preload="auto"></audio>
 <audio id="winSound" src="win.mp3" preload="auto"></audio>
+
+<div id="inspiredBy">Inspired by Pente</div>
 
 <script>
     const size = 19;
@@ -496,6 +792,7 @@
         document.getElementById("player4Entry").style.display = numPlayers === 4 ? "block" : "none";
         document.getElementById("playButton").style.display = "block";
         document.getElementById("tournamentButton").style.display = "block";
+        document.querySelector(".info-icon").style.display = "flex";
         document.getElementById("play2Button").style.display = "none";
         document.getElementById("play4Button").style.display = "none";
         document.getElementById("backButton").style.display = "inline-block";
@@ -509,6 +806,7 @@
         document.getElementById("player4Entry").style.display = "none";
         document.getElementById("playButton").style.display = "none";
         document.getElementById("tournamentButton").style.display = "none";
+        document.querySelector(".info-icon").style.display = "none";
         document.getElementById("play2Button").style.display = "inline-block";
         document.getElementById("play4Button").style.display = "inline-block";
         document.getElementById("backButton").style.display = "none";
@@ -516,6 +814,7 @@
 
     function startGame(tournamentMode) {
         isTournament = tournamentMode;
+           currentPlayer = 0;
         document.getElementById("backButton").style.display = "none";
         tournamentGameCount = 0;
         scores = { blue: 0, red: 0, yellow: 0, green: 0 };
@@ -829,7 +1128,8 @@
 
         stoneColors.forEach(color => {
             let container = document.getElementById(`${color}CapturedStones`);
-            while (container.children.length > capturesBefore[color]) {
+            let targetCount = capturesBefore[color] * 2; // Each pair is 2 stones
+            while (container.children.length > targetCount) {
                 container.removeChild(container.lastChild);
             }
         });
@@ -1005,12 +1305,14 @@
             document.getElementById("player3Name").value = "";
             document.getElementById("player4Name").value = "";
             
+            document.getElementById("main-title").style.display = "block";
             document.getElementById("player1Entry").style.display = "none";
             document.getElementById("player2Entry").style.display = "none";
             document.getElementById("player3Entry").style.display = "none";
             document.getElementById("player4Entry").style.display = "none";
             document.getElementById("playButton").style.display = "none";
             document.getElementById("tournamentButton").style.display = "none";
+            document.querySelector(".info-icon").style.display = "none";
             document.getElementById("backButton").style.display = "none";
             document.getElementById("play2Button").style.display = "inline-block";
             document.getElementById("play4Button").style.display = "inline-block";
@@ -1055,9 +1357,11 @@
             document.getElementById("player4Entry").style.display = "none";
             document.getElementById("playButton").style.display = "none";
             document.getElementById("tournamentButton").style.display = "none";
+            document.querySelector(".info-icon").style.display = "none";
             document.getElementById("backButton").style.display = "none";
             document.getElementById("play2Button").style.display = "inline-block";
             document.getElementById("play4Button").style.display = "inline-block";
+            document.getElementById("main-title").style.display = "block";
             
             document.getElementById("nameEntryScreen").style.display = "block";
             document.getElementById("nameEntryScreen").style.opacity = "1";
@@ -1091,6 +1395,20 @@ function toggleSound() {
     placeSound.muted = !isSoundOn;
     captureSound.muted = !isSoundOn;
     winSound.muted = !isSoundOn;
+}
+
+function showTournamentInfo() {
+    document.getElementById("infoModal").style.display = "flex";
+}
+
+function closeTournamentInfo() {
+    document.getElementById("infoModal").style.display = "none";
+}
+
+function closeModalIfOutside(event) {
+    if (event.target.id === "infoModal") {
+        closeTournamentInfo();
+    }
 }
 </script>
 
