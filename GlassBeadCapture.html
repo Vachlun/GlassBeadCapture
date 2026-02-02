@@ -19,12 +19,48 @@
             background-position: center;
             background-repeat: no-repeat;
             position: relative;
+            gap: 60px;
         }
-        .game-container {
+        #mainContent {
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: opacity 0.5s ease-in-out;
+            justify-content: center;
+        }
+        #buttonColumn {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            align-items: center;
+            justify-items: center;
+            width: auto;
+        }
+        #playButtonContainer {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+            align-items: center;
+            justify-items: center;
+            width: auto;
+            margin: 10px 0;
+        }
+        #mainButtonRow {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+            align-items: center;
+            justify-items: center;
+            width: auto;
+            margin: 10px 0;
+        }
+        #quitButtonRow {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+            align-items: center;
+            justify-items: center;
+            width: auto;
+            margin: 10px 0;
         }
         svg {
             border: 2px solid white;
@@ -32,23 +68,26 @@
             height: 800px;
         }
         .scoreboard {
-            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
             font-size: 20px;
             font-weight: bold;
             display: none;
             color: #d4a373;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             padding: 15px;
-            padding-top: 50px; /* Added to stretch upwards for turn display */
-            padding-bottom: 80px;
+            margin: 0;
             border-radius: 10px;
         }
         #turnDisplay {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+            position: static;
             font-size: 24px;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+            color: white;
+            margin: 0;
+            padding: 0;
         }
         #winMessage {
             font-size: 30px;
@@ -67,29 +106,98 @@
             transition: opacity 0.5s ease-in-out;
         }
         #winScreen {
-            padding: 20px;
-            border-radius: 10px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            width: auto;
+            opacity: 0;
         }
         #tournamentEndScreen {
             padding: 20px;
             border-radius: 10px;
         }
-        #winScreen button, #tournamentEndScreen button {
-            margin: 15px;
-            padding: 40px 80px;
-            background-color: transparent;
-            color: white;
-            border: none;
-            font-size: 22px;
-            cursor: pointer;
-            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
-            transition: transform 0.2s ease;
-            position: relative;
-            z-index: 1;
+        #winOverlay {
+            background: rgba(20, 20, 40, 0.95);
+            border: 3px solid #d4a373;
+            border-radius: 20px;
+            padding: 80px 150px;
+            text-align: center;
+            max-width: 900px;
+            box-shadow: 0 0 40px rgba(212, 163, 115, 0.5);
         }
-        #winScreen button:hover, #tournamentEndScreen button:hover {
-            transform: scale(1.05);
+        #winScreenMessage {
+            font-size: 64px;
+            font-weight: bold;
+            color: #FFD700;
+            margin: 0 0 15px 0;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+        #winDetails {
+            font-size: 32px;
+            color: #d4a373;
+            margin: 0 0 25px 0;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+        #scoreDisplay {
+            color: white;
+            font-size: 18px;
+            margin: 25px 0;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.8;
+        }
+        #capturesGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .playerCaptureBox {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #d4a373;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .playerCaptureBox p {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .captureBeads {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            justify-items: center;
+            margin-top: 10px;
+        }
+        .capturePair {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+            justify-content: center;
+        }
+        #winButtonsContainer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 40px;
+            justify-items: center;
+        }
+        #rematchButton, #quitGameButton {
+            width: 160px;
+            height: 100px;
+            padding: 0;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
             background-color: transparent;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        #rematchButton:hover, #quitGameButton:hover {
+            transform: scale(1.1);
         }
         .name-entry {
             text-align: center;
@@ -109,7 +217,7 @@
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
         }
         button {
-            padding: 40px 80px;
+            padding: 0;
             font-size: 22px;
             cursor: pointer;
             background-color: transparent;
@@ -122,7 +230,9 @@
             background-position: center;
             position: relative;
             z-index: 1;
-            margin: 10px;
+            margin: 0;
+            width: 160px;
+            height: 100px;
         }
         button:hover {
             transform: scale(1.05);
@@ -155,6 +265,21 @@
             background-image: url('undo.png');
             padding: 30px 60px;
             display: none;
+            order: 2;
+        }
+        #quitGameplayButton {
+            background-image: url('quitGame.png');
+            padding: 30px 60px;
+            display: none;
+            margin-top: 0;
+            order: -1;
+        }
+        #mainMenuButton {
+            background-image: url('mainMenu.png');
+            padding: 30px 60px;
+            display: none;
+            margin-top: 0;
+            order: -1;
         }
         .stone {
             pointer-events: none;
@@ -162,7 +287,9 @@
         #winScreenMessage, #tournamentWinner {
             color: white;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
-            font-size: 24px;
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
         #scoreDisplay, #finalScores {
             color: white;
@@ -195,11 +322,38 @@
             padding: 5px 10px;
             cursor: pointer;
             transition: transform 0.2s ease;
-            margin-top: 10px; /* Added spacing from undo button */
-            position: relative; /* Changed from absolute to relative for proper flow */
+            margin-top: 0;
+            position: relative;
+            order: -1;
         }
         #soundToggleButton:hover {
             transform: scale(1.05);
+        }
+        /* Back button shown on player-selection to return to main menu */
+        #backButton {
+            padding: 60px 120px;
+            font-size: 22px;
+            cursor: pointer;
+            background-color: transparent;
+            color: white;
+            border: none;
+            display: none;
+            margin: 10px;
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+            background-image: url('back.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        /* Main menu title */
+        #main-title {
+            color: white;
+            font-size: 48px;
+            margin: 10px 0 20px 0;
+            text-align: center;
+            text-shadow: 0 3px 8px rgba(0,0,0,0.6);
+            font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
+            pointer-events: none;
         }
         /* Inspired by note fixed bottom-right so it shows on setup and game screens */
         #inspiredBy {
@@ -223,7 +377,9 @@
 </head>
 <body>
 
+<div id="mainContent">
 <div class="game-container" id="nameEntryScreen">
+    <h1 id="main-title">Glass Bead Capture</h1>
     <div class="name-entry" id="player1Entry">
         <label for="player1Name">Enter Player 1's name <img src="stone.png" alt="Blue stone" style="width:20px;height:20px;vertical-align:middle;margin-left:6px;">: <br></label>
         <input type="text" id="player1Name" placeholder="Player 1" maxlength="12" />
@@ -240,14 +396,18 @@
         <label for="player4Name">Enter Player 4's name <img src="stone4.png" alt="Green stone" style="width:20px;height:20px;vertical-align:middle;margin-left:6px;">: <br></label>
         <input type="text" id="player4Name" placeholder="Player 4" maxlength="12" />
     </div>
-    <button id="play2Button" onclick="showPlayers(2)"></button>
-    <button id="play4Button" onclick="showPlayers(4)"></button>
+    <div id="mainButtonRow">
+        <button id="play2Button" onclick="showPlayers(2)"></button>
+        <button id="play4Button" onclick="showPlayers(4)"></button>
+    </div>
     <div id="playButtonContainer">
         <button id="playButton" onclick="startGame(false)"></button>
         <button id="tournamentButton" onclick="startGame(true)"></button>
+        <button id="backButton" aria-label="Back" onclick="backToMenu()"></button>
     </div>
-    <br>
-    <button id="quitButton" onclick="quitGameCompletely()"></button>
+    <div id="quitButtonRow">
+        <button id="quitButton" onclick="quitGameCompletely()"></button>
+    </div>
 </div>
 
 <div class="game-container" id="gameScreen" style="display:none;">
@@ -257,6 +417,9 @@
     <p id="winMessage"></p>
 </div>
 
+</div>
+
+<div id="buttonColumn">
 <h2 id="turnDisplay"></h2>
 <div id="scoreboard" class="scoreboard">
     <p>Captured Pairs</p>
@@ -270,16 +433,20 @@
     <div id="greenCapturedStones" class="captured-stones"></div>
     <button id="undoButton" onclick="undoTurn()"></button>
     <button id="soundToggleButton" onclick="toggleSound()" style="background-image: url('on.png'); width: 60px; height: 30px; background-size: contain; background-repeat: no-repeat; background-position: center; border: none; background-color: transparent; cursor: pointer;"></button>
+    <button id="mainMenuButton" onclick="quitToMainMenu()"></button>
+</div>
 </div>
 
-<!-- fixed 'Inspired by Pente' label shown bottom-right on both screens -->
-<div id="inspiredBy">Inspired by Pente</div>
-
 <div id="winScreen">
-    <h2 id="winScreenMessage"></h2>
-    <div id="scoreDisplay"></div>
-    <button id="rematchButton" onclick="rematch()"></button>
-    <button id="quitGameButton" onclick="quitGame()"></button>
+    <div id="winOverlay">
+        <h1 id="winScreenMessage">Player Wins!</h1>
+        <p id="winDetails">Win Condition</p>
+        <div id="scoreDisplay"></div>
+        <div id="winButtonsContainer">
+            <button id="rematchButton" onclick="rematch()"></button>
+            <button id="quitGameButton" onclick="quitGame()"></button>
+        </div>
+    </div>
 </div>
 
 <div id="tournamentEndScreen">
@@ -287,6 +454,7 @@
     <div id="finalScores"></div>
     <button id="quitGameButton" onclick="quitGame()"></button>
 </div>
+
 
 <audio id="placeSound" src="place.mp3" preload="auto"></audio>
 <audio id="captureSound" src="capture.mp3" preload="auto"></audio>
@@ -321,6 +489,7 @@
 
     function showPlayers(numPlayers) {
         playerCount = numPlayers;
+        document.getElementById("main-title").style.display = "none";
         document.getElementById("player1Entry").style.display = "block";
         document.getElementById("player2Entry").style.display = "block";
         document.getElementById("player3Entry").style.display = numPlayers === 4 ? "block" : "none";
@@ -329,10 +498,25 @@
         document.getElementById("tournamentButton").style.display = "block";
         document.getElementById("play2Button").style.display = "none";
         document.getElementById("play4Button").style.display = "none";
+        document.getElementById("backButton").style.display = "inline-block";
+    }
+
+    function backToMenu() {
+        document.getElementById("main-title").style.display = "block";
+        document.getElementById("player1Entry").style.display = "none";
+        document.getElementById("player2Entry").style.display = "none";
+        document.getElementById("player3Entry").style.display = "none";
+        document.getElementById("player4Entry").style.display = "none";
+        document.getElementById("playButton").style.display = "none";
+        document.getElementById("tournamentButton").style.display = "none";
+        document.getElementById("play2Button").style.display = "inline-block";
+        document.getElementById("play4Button").style.display = "inline-block";
+        document.getElementById("backButton").style.display = "none";
     }
 
     function startGame(tournamentMode) {
         isTournament = tournamentMode;
+        document.getElementById("backButton").style.display = "none";
         tournamentGameCount = 0;
         scores = { blue: 0, red: 0, yellow: 0, green: 0 };
         players = [];
@@ -351,6 +535,7 @@
             document.getElementById("scoreboard").style.display = "block";
             document.getElementById("turnDisplay").style.display = "block";
             document.getElementById("undoButton").style.display = "block";
+            document.getElementById("mainMenuButton").style.display = "block";
             updateTurnDisplay();
         }, 500);
     }
@@ -459,9 +644,17 @@
 
         let captureOccurred = checkCapture(x, y, color);
         if (captureOccurred) {
-            move.capturedStones = move.stonesBeforeCapture.keys()
-                .filter(k => !placedStones.has(k))
-                .map(k => ({ key: k, ...move.stonesBeforeCapture.get(k) }));
+            move.capturedStones = Array.from(move.stonesBeforeCapture.entries())
+                .filter(([k, v]) => !placedStones.has(k))
+                .map(([k, v]) => {
+                    let stone = v.element;
+                    return { 
+                        key: k, 
+                        x: parseFloat(stone.getAttribute("x")),
+                        y: parseFloat(stone.getAttribute("y")),
+                        color: v.color 
+                    };
+                });
         }
 
         moveHistory.push(move);
@@ -520,22 +713,24 @@
             captureSound.play();
         }
 
-        if (captures.blue >= 5) endGame(0, false);
-        if (captures.red >= 5) endGame(1, false);
+        // Check for capture-based win (5 or more pairs captured)
+        if (captures.blue >= 5) return triggerWin(0, "capture");
+        if (captures.red >= 5) return triggerWin(1, "capture");
         if (playerCount === 4) {
-            if (captures.yellow >= 5) endGame(2, false);
-            if (captures.green >= 5) endGame(3, false);
+            if (captures.yellow >= 5) return triggerWin(2, "capture");
+            if (captures.green >= 5) return triggerWin(3, "capture");
         }
 
         return captured;
     }
 
     function checkWin(x, y, color) {
+        // Check for 5-in-a-row win (Pente rule)
         let directions = [
-            { dx: spacing, dy: 0 },
-            { dx: 0, dy: spacing },
-            { dx: spacing, dy: spacing },
-            { dx: spacing, dy: -spacing }
+            { dx: spacing, dy: 0 },      // Horizontal
+            { dx: 0, dy: spacing },      // Vertical
+            { dx: spacing, dy: spacing }, // Diagonal \
+            { dx: spacing, dy: -spacing } // Diagonal /
         ];
 
         const winCondition = playerCount === 4 ? 4 : 5;
@@ -543,6 +738,7 @@
         for (let { dx, dy } of directions) {
             let count = 1;
 
+            // Count in both directions from placed stone
             for (let dir of [-1, 1]) {
                 let step = 1;
                 while (true) {
@@ -558,8 +754,9 @@
                 }
             }
 
+            // Win condition met
             if (count >= winCondition) {
-                endGame(currentPlayer, true);
+                triggerWin(currentPlayer, "row");
                 return;
             }
         }
@@ -612,14 +809,16 @@
         let lastMove = moveHistory.pop();
         let { player, key, capturesBefore, capturedStones } = lastMove;
 
-        let stone = placedStones.get(key).element;
-        svg.removeChild(stone);
-        placedStones.delete(key);
+        if (placedStones.has(key)) {
+            let stone = placedStones.get(key).element;
+            svg.removeChild(stone);
+            placedStones.delete(key);
+        }
 
-        capturedStones.forEach(({ key, element, color }) => {
+        capturedStones.forEach(({ key, x, y, color }) => {
             let restoredStone = document.createElementNS("http://www.w3.org/2000/svg", "image");
-            restoredStone.setAttribute("x", element.getAttribute("x"));
-            restoredStone.setAttribute("y", element.getAttribute("y"));
+            restoredStone.setAttribute("x", x);
+            restoredStone.setAttribute("y", y);
             restoredStone.setAttribute("width", stoneSize);
             restoredStone.setAttribute("height", stoneSize);
             restoredStone.setAttribute("href", stoneImages[stoneColors.indexOf(color)]);
@@ -642,33 +841,75 @@
         updateTurnDisplay();
     }
 
-    function endGame(winnerIndex, winByRow) {
+    function triggerWin(winnerIndex, winType) {
+        // winType: "row" for 5-in-a-row, "capture" for 5+ pairs captured
         gameOver = true;
-        if (isTournament) {
-            tournamentGameCount++;
-            updateScores(winnerIndex, winByRow);
-        }
+        endGame(winnerIndex, winType);
+    }
+
+    function endGame(winnerIndex, winType) {
+        // Hide game screen and buttons
         document.getElementById("gameScreen").style.opacity = "0";
         setTimeout(() => {
             document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("scoreboard").style.display = "none";
             document.getElementById("turnDisplay").style.display = "none";
             document.getElementById("undoButton").style.display = "none";
-            if (isTournament && tournamentGameCount < maxTournamentGames) {
-                document.getElementById("winScreen").style.display = "block";
-                document.getElementById("winScreen").style.opacity = "0";
-                setTimeout(() => document.getElementById("winScreen").style.opacity = "1", 10);
-                document.getElementById("winScreenMessage").innerText = `${players[winnerIndex]} Wins Game ${tournamentGameCount}!`;
-                displayScores();
-            } else if (isTournament && tournamentGameCount === maxTournamentGames) {
-                endTournament();
-            } else {
-                document.getElementById("winScreen").style.display = "block";
-                document.getElementById("winScreen").style.opacity = "0";
-                setTimeout(() => document.getElementById("winScreen").style.opacity = "1", 10);
-                document.getElementById("winScreenMessage").innerText = `${players[winnerIndex]} Wins!`;
+            document.getElementById("mainMenuButton").style.display = "none";
+
+            // Show win screen
+            document.getElementById("winScreen").style.display = "block";
+            document.getElementById("winScreen").style.opacity = "0";
+            
+            // Populate win screen with player name and win info
+            let winMessage = `${players[winnerIndex]} Wins!`;
+            let winDetails = "";
+            
+            if (winType === "row") {
+                winDetails = `${playerCount === 4 ? "4" : "5"} in a Row`;
+            } else if (winType === "capture") {
+                winDetails = `Captured ${captures[stoneColors[winnerIndex]]} Pairs`;
             }
+            
+            document.getElementById("winScreenMessage").innerText = winMessage;
+            document.getElementById("winDetails").innerText = winDetails;
+            
+            // Update scores display for end screen with visual beads
+            let scoreHTML = `<div id="capturesGrid">`;
+            
+            // Display each player's captures
+            for (let i = 0; i < playerCount; i++) {
+                const color = stoneColors[i];
+                const playerName = players[i];
+                const captureCount = captures[color];
+                const stoneImage = stoneImages[i];
+                
+                scoreHTML += `<div class="playerCaptureBox">
+                    <p style="font-size: 20px; color: ${turnColors[i]}; margin: 5px 0;">${playerName}</p>
+                    <div class="captureBeads">`;
+                
+                // Create grid of pairs (each pair = 2 beads)
+                for (let j = 0; j < captureCount; j++) {
+                    scoreHTML += `<div class="capturePair">
+                        <img src="${stoneImage}" alt="pair" style="width: 25px; height: 25px;">
+                        <img src="${stoneImage}" alt="pair" style="width: 25px; height: 25px;">
+                    </div>`;
+                }
+                
+                scoreHTML += `</div>
+                </div>`;
+            }
+            
+            scoreHTML += `</div>`;
+            document.getElementById("scoreDisplay").innerHTML = scoreHTML;
+            
+            // Play win sound and fade in
             winSound.currentTime = 0;
             winSound.play();
+            
+            setTimeout(() => {
+                document.getElementById("winScreen").style.opacity = "1";
+            }, 10);
         }, 500);
     }
 
@@ -679,44 +920,150 @@
         moveHistory = [];
         updateScoreboard();
 
+        // Clear captured stones display
         document.getElementById("blueCapturedStones").innerHTML = "";
         document.getElementById("redCapturedStones").innerHTML = "";
         document.getElementById("yellowCapturedStones").innerHTML = "";
         document.getElementById("greenCapturedStones").innerHTML = "";
 
+        // Clear board
         svg.innerHTML = '';
         svg.appendChild(boardImage);
 
+        // Reset to first player
         currentPlayer = 0;
         updateTurnDisplay();
 
+        // Fade out win screen, fade in game screen
         document.getElementById("winScreen").style.opacity = "0";
         setTimeout(() => {
             document.getElementById("winScreen").style.display = "none";
             document.getElementById("gameScreen").style.display = "block";
             document.getElementById("gameScreen").style.opacity = "0";
+            document.getElementById("scoreboard").style.display = "block";
             document.getElementById("turnDisplay").style.display = "block";
             document.getElementById("undoButton").style.display = "block";
+            document.getElementById("mainMenuButton").style.display = "block";
             setTimeout(() => document.getElementById("gameScreen").style.opacity = "1", 10);
         }, 500);
     }
 
-    function quitGame() {
+    function quitGameplay() {
         document.getElementById("gameScreen").style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("turnDisplay").style.display = "none";
+            document.getElementById("undoButton").style.display = "none";
+            document.getElementById("quitGameplayButton").style.display = "none";
+            document.getElementById("mainMenuButton").style.display = "none";
+            
+            gameOver = false;
+            placedStones.clear();
+            captures = { blue: 0, red: 0, yellow: 0, green: 0 };
+            moveHistory = [];
+            updateScoreboard();
+            
+            document.getElementById("blueCapturedStones").innerHTML = "";
+            document.getElementById("redCapturedStones").innerHTML = "";
+            document.getElementById("yellowCapturedStones").innerHTML = "";
+            document.getElementById("greenCapturedStones").innerHTML = "";
+            
+            svg.innerHTML = '';
+            svg.appendChild(boardImage);
+            
+            document.getElementById("nameEntryScreen").style.display = "block";
+            document.getElementById("nameEntryScreen").style.opacity = "1";
+            document.getElementById("scoreboard").style.display = "none";
+        }, 500);
+    }
+
+    function quitToMainMenu() {
+        document.getElementById("gameScreen").style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("turnDisplay").style.display = "none";
+            document.getElementById("undoButton").style.display = "none";
+            document.getElementById("mainMenuButton").style.display = "none";
+            
+            gameOver = false;
+            placedStones.clear();
+            captures = { blue: 0, red: 0, yellow: 0, green: 0 };
+            moveHistory = [];
+            scores = { blue: 0, red: 0, yellow: 0, green: 0 };
+            updateScoreboard();
+            
+            document.getElementById("blueCapturedStones").innerHTML = "";
+            document.getElementById("redCapturedStones").innerHTML = "";
+            document.getElementById("yellowCapturedStones").innerHTML = "";
+            document.getElementById("greenCapturedStones").innerHTML = "";
+            
+            svg.innerHTML = '';
+            svg.appendChild(boardImage);
+            
+            document.getElementById("player1Name").value = "";
+            document.getElementById("player2Name").value = "";
+            document.getElementById("player3Name").value = "";
+            document.getElementById("player4Name").value = "";
+            
+            document.getElementById("player1Entry").style.display = "none";
+            document.getElementById("player2Entry").style.display = "none";
+            document.getElementById("player3Entry").style.display = "none";
+            document.getElementById("player4Entry").style.display = "none";
+            document.getElementById("playButton").style.display = "none";
+            document.getElementById("tournamentButton").style.display = "none";
+            document.getElementById("backButton").style.display = "none";
+            document.getElementById("play2Button").style.display = "inline-block";
+            document.getElementById("play4Button").style.display = "inline-block";
+            
+            document.getElementById("nameEntryScreen").style.display = "block";
+            document.getElementById("nameEntryScreen").style.opacity = "1";
+            document.getElementById("scoreboard").style.display = "none";
+        }, 500);
+    }
+
+    function quitGame() {
+        gameOver = false;
+        placedStones.clear();
+        captures = { blue: 0, red: 0, yellow: 0, green: 0 };
+        moveHistory = [];
+        scores = { blue: 0, red: 0, yellow: 0, green: 0 };
+        updateScoreboard();
+        
+        document.getElementById("blueCapturedStones").innerHTML = "";
+        document.getElementById("redCapturedStones").innerHTML = "";
+        document.getElementById("yellowCapturedStones").innerHTML = "";
+        document.getElementById("greenCapturedStones").innerHTML = "";
+        
+        svg.innerHTML = '';
+        svg.appendChild(boardImage);
+        
+        document.getElementById("player1Name").value = "";
+        document.getElementById("player2Name").value = "";
+        document.getElementById("player3Name").value = "";
+        document.getElementById("player4Name").value = "";
+        
         document.getElementById("winScreen").style.opacity = "0";
-        document.getElementById("tournamentEndScreen").style.opacity = "0";
         setTimeout(() => {
             document.getElementById("gameScreen").style.display = "none";
             document.getElementById("winScreen").style.display = "none";
-            document.getElementById("tournamentEndScreen").style.display = "none";
+            document.getElementById("scoreboard").style.display = "none";
+            
+            // Reset player selection to initial state
+            document.getElementById("player1Entry").style.display = "none";
+            document.getElementById("player2Entry").style.display = "none";
+            document.getElementById("player3Entry").style.display = "none";
+            document.getElementById("player4Entry").style.display = "none";
+            document.getElementById("playButton").style.display = "none";
+            document.getElementById("tournamentButton").style.display = "none";
+            document.getElementById("backButton").style.display = "none";
+            document.getElementById("play2Button").style.display = "inline-block";
+            document.getElementById("play4Button").style.display = "inline-block";
+            
             document.getElementById("nameEntryScreen").style.display = "block";
-            document.getElementById("nameEntryScreen").style.opacity = "0";
-            document.getElementById("turnDisplay").style.display = "block";
+            document.getElementById("nameEntryScreen").style.opacity = "1";
+            document.getElementById("turnDisplay").style.display = "none";
             document.getElementById("undoButton").style.display = "none";
-            setTimeout(() => {
-                document.getElementById("nameEntryScreen").style.opacity = "1";
-                location.reload();
-            }, 10);
+            document.getElementById("mainMenuButton").style.display = "none";
         }, 500);
     }
 
