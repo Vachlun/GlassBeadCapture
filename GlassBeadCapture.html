@@ -24,6 +24,7 @@
             overflow-y: scroll;
             overflow-x: hidden;
             align-items: center;
+               column-gap: 60px;
         }
         #mainContent {
             display: flex;
@@ -65,14 +66,18 @@
         }
         .info-icon {
             position: absolute;
-            left: calc(50% + 90px);
-            width: 30px;
-            height: 30px;
-            background-color: rgba(255, 255, 255, 0.15);
-            border: 2px solid rgba(212, 163, 115, 0.7);
-            border-radius: 50%;
-            color: white;
-            font-size: 20px;
+            left: calc(50% + 130px);
+            width: 40px;
+            height: 40px;
+            background-image: url('questionmark2.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: transparent;
+            border: none;
+            border-radius: 0;
+            color: transparent;
+            font-size: 0;
             font-weight: bold;
             cursor: pointer;
             display: none;
@@ -83,8 +88,7 @@
         }
         .info-icon:hover {
             transform: scale(1.1);
-            background-color: rgba(255, 255, 255, 0.25);
-            border-color: #d4a373;
+            background-color: transparent;
         }
         #infoModal {
             display: none;
@@ -118,7 +122,7 @@
             letter-spacing: 0.5px;
         }
         #infoModalContent p {
-            color: rgba(255, 255, 255, 0.95);
+            color: #d4a373;
             font-size: 19px;
             line-height: 1.7;
             margin: 16px 0;
@@ -130,7 +134,7 @@
             font-weight: 700;
         }
         #infoModalContent ul {
-            color: rgba(255, 255, 255, 0.95);
+            color: #d4a373;
             font-size: 19px;
             line-height: 2;
             margin: 20px 0;
@@ -263,7 +267,7 @@
             font-size: 28px;
             font-weight: 700;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
-            color: white;
+            color: #FFD700;
             margin: 0;
             padding: 8px 16px;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
@@ -276,7 +280,7 @@
         }
         #winMessage {
             font-size: 30px;
-            color: green;
+            color: #FFD700;
             font-weight: bold;
             display: none;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
@@ -335,14 +339,14 @@
         }
         #winDetails {
             font-size: 36px;
-            color: #FFD700;
+            color: #d4a373;
             margin: 0 0 20px 0;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             font-weight: 600;
             letter-spacing: 0.5px;
         }
         #scoreDisplay {
-            color: white;
+            color: #FFD700;
             font-size: 18px;
             margin: 12px 0;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
@@ -361,11 +365,6 @@
             border-radius: 12px;
             padding: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s ease;
-        }
-        .playerCaptureBox:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(212, 163, 115, 0.2);
         }
         .playerCaptureBox p {
             font-weight: 700;
@@ -388,10 +387,6 @@
             justify-content: center;
             padding: 5px;
             border-radius: 8px;
-            transition: transform 0.2s ease;
-        }
-        .capturePair:hover {
-            transform: scale(1.1);
         }
         #winButtonsContainer {
             display: grid;
@@ -420,7 +415,7 @@
             font-size: 20px;
             margin-bottom: 16px;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
-            color: white;
+            color: #d4a373;
             display: none;
             font-weight: 500;
             letter-spacing: 0.3px;
@@ -429,7 +424,7 @@
             padding: 12px 16px;
             font-size: 18px;
             margin: 8px;
-            color: white;
+            color: #FFD700;
             background-color: rgba(255, 255, 255, 0.15);
             border: 2px solid rgba(212, 163, 115, 0.6);
             border-radius: 8px;
@@ -473,30 +468,42 @@
             transform: scale(0.98);
         }
         #play2Button {
-            background-image: url('play2.png');
+            background-image: url('2Player2.png');
         }
         #play4Button {
-            background-image: url('play4.png');
+            background-image: url('4Player2.png');
         }
         #playButton {
-            background-image: url('play.png');
+            background-image: url('start2.png');
             display: none;
         }
         #tournamentButton {
-            background-image: url('tournament.png');
+            background-image: url('tournament2.png');
             display: none;
+            width: 200px;
+            height: 90px;
         }
         #quitButton {
-            background-image: url('quit.png');
+            background-image: url('quit2.png');
+        }
+        #mainMenuButton {
+            background-image: url('mainMenu2.png');
+            display: none;
+            order: -1;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        #mainMenuButton:hover {
+            transform: scale(1.08);
+            filter: brightness(1.1);
         }
         #rematchButton {
             background-image: url('rematch.png');
         }
         #quitGameButton {
-            background-image: url('quitGame.png');
+            background-image: url('quit2.png');
         }
         #undoButton {
-            background-image: url('undo.png');
+            background-image: url('undoTurn2.png');
             display: none;
             order: 2;
             transition: transform 0.2s ease, filter 0.2s ease;
@@ -515,21 +522,11 @@
             transform: scale(1.08);
             filter: brightness(1.1);
         }
-        #mainMenuButton {
-            background-image: url('mainMenu.png');
-            display: none;
-            order: -1;
-            transition: transform 0.2s ease, filter 0.2s ease;
-        }
-        #mainMenuButton:hover {
-            transform: scale(1.08);
-            filter: brightness(1.1);
-        }
         .stone {
             pointer-events: none;
         }
         #winScreenMessage, #tournamentWinner {
-            color: #FFD700;
+            color: #d4a373;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             font-size: 60px;
             font-weight: bold;
@@ -538,7 +535,7 @@
             letter-spacing: 1px;
         }
         #scoreDisplay, #finalScores {
-            color: rgba(255, 255, 255, 0.95);
+            color: #FFD700;
             font-size: 20px;
             margin-top: 25px;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
@@ -566,7 +563,7 @@
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
             background-color: transparent;
             color: white;
-            border: 2px solid rgba(212, 163, 115, 0.6);
+            border: none;
             padding: 0;
             cursor: pointer;
             transition: transform 0.2s ease, border-color 0.2s ease;
@@ -582,14 +579,14 @@
             background-repeat: no-repeat;
             background-position: center;
             flex-shrink: 0;
+            background-image: url('sound2.png');
         }
         #soundToggleButton:hover {
             transform: scale(1.08);
-            border-color: #d4a373;
         }
         /* Back button shown on player-selection to return to main menu */
         #backButton {
-            padding: 60px 120px;
+            padding: 0;
             font-size: 22px;
             cursor: pointer;
             background-color: transparent;
@@ -603,6 +600,8 @@
             background-repeat: no-repeat;
             background-position: center;
             transition: transform 0.2s ease, filter 0.2s ease;
+            width: 160px;
+            height: 80px;
         }
         #backButton:hover {
             transform: scale(1.08);
@@ -610,7 +609,7 @@
         }
         /* Main menu title */
         #main-title {
-            color: white;
+            color: #d4a373;
             font-size: 56px;
             margin: 20px 0 40px 0;
             text-align: center;
@@ -625,7 +624,7 @@
             position: fixed;
             right: 20px;
             bottom: 15px;
-            color: rgba(255, 255, 255, 0.85);
+            color: #d4a373;
             font-size: 26px;
             font-weight: 700;
             font-family: 'Baloo 2', 'Segoe UI', Roboto, Arial, sans-serif;
@@ -710,7 +709,7 @@
     </div>
     <div class="button-group">
         <button id="undoButton" onclick="undoTurn()"></button>
-        <button id="soundToggleButton" onclick="toggleSound()" style="background-image: url('on.png'); width: 60px; background-size: contain; background-repeat: no-repeat; background-position: center; border: none; background-color: transparent; cursor: pointer;"></button>
+        <button id="soundToggleButton" onclick="toggleSound()"></button>
         <button id="mainMenuButton" onclick="quitToMainMenu()"></button>
     </div>
 </div>
@@ -842,8 +841,8 @@
     function updateTurnDisplay() {
         document.getElementById("turnDisplay").innerText = `${players[currentPlayer]}'s Turn`;
         document.getElementById("turnDisplay").style.color = turnColors[currentPlayer];
-        document.getElementById("yellowCaptured").parentElement.style.display = playerCount === 4 ? "block" : "none";
-        document.getElementById("greenCaptured").parentElement.style.display = playerCount === 4 ? "block" : "none";
+        document.getElementById("yellowScore").parentElement.style.display = playerCount === 4 ? "block" : "none";
+        document.getElementById("greenScore").parentElement.style.display = playerCount === 4 ? "block" : "none";
     }
 
     function updateScoreboard() {
@@ -1391,7 +1390,7 @@
     let isSoundOn = true;
 function toggleSound() {
     isSoundOn = !isSoundOn;
-    document.getElementById("soundToggleButton").style.backgroundImage = `url('${isSoundOn ? 'on.png' : 'off.png'}')`;
+    document.getElementById("soundToggleButton").style.backgroundImage = `url('${isSoundOn ? 'sound2.png' : 'mute2.png'}')`;
     placeSound.muted = !isSoundOn;
     captureSound.muted = !isSoundOn;
     winSound.muted = !isSoundOn;
